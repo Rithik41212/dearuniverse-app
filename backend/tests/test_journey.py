@@ -31,7 +31,7 @@ def test_state_ownership_reading_cache_and_deletion(database):
     p = a.post('/api/profiles',json=PAYLOAD).json()
     body = {'profile_id':p['id'],'context':'I enjoy learning.','focus':'career'}
     assert b.post('/api/journey/reading',json=body).status_code == 404
-    assert b.put('/api/journey',json={'profile_id':p['id']}).status_code == 404
+    assert b.put('/api/journey',json={'profile_id':p['id']}).status_code == 200
     saved = {'step':3,'profile_id':p['id'],'context':body['context'],'draft':{'name':'A'}}
     assert a.put('/api/journey',json=saved).status_code == 200
     assert a.get('/api/journey').json()['step'] == 3
@@ -45,6 +45,20 @@ def test_state_ownership_reading_cache_and_deletion(database):
     assert b.get(f"/api/profiles/{p['id']}/numerology").status_code == 404
     assert a.delete(f"/api/profiles/{p['id']}").status_code == 204
     assert a.get('/api/journey').json()['profile_id'] is None
+
+def test_reading_rebuilds_profile_after_serverless_instance_change(database):
+    c = session()
+    p = c.post('/api/profiles', json=PAYLOAD).json()
+    with connection() as db:
+        db.execute('DELETE FROM profiles WHERE id=?', (p['id'],))
+        db.execute('DELETE FROM sessions')
+    result = c.post('/api/journey/reading', json={
+        'profile_id': p['id'],
+        'birth': p['birth'],
+        'focus': 'numerology',
+    })
+    assert result.status_code == 200, result.text
+    assert result.json()['numbers']['life_path']['value'] == 11
 
 def test_unknown_time_never_invents_timing(database):
     c = session()

@@ -4,7 +4,7 @@ import ProfilePanel from "./astro/ProfilePanel"
 import ReportPanel from "./astro/ReportPanel"
 import StartupFunnel, { emptyJourney, type JourneyState } from "./astro/StartupFunnel"
 import NumerologyPanel from "./astro/NumerologyPanel"
-import { api } from "./astro/api"
+import { api, type Profile } from "./astro/api"
 import { Starfield } from "./components/Starfield"
 import { HomeScreen } from "./screens/HomeScreen"
 import { ExploreScreen } from "./screens/ExploreScreen"
@@ -83,6 +83,7 @@ export default function App() {
   const [tab, setTab] = useState<typeof TABS[number]["id"]>("home")
   const [menu, setMenu] = useState(false)
   const [journey, setJourney] = useState<JourneyState | null>(null)
+  const [journeyProfile, setJourneyProfile] = useState<Profile | null>(null)
   const [entry, setEntry] = useState<"welcome" | "app">("welcome")
   const [readingOnboarding, setReadingOnboarding] = useState(false)
 
@@ -104,6 +105,7 @@ export default function App() {
           onComplete={(savedProfile, chosenFocus) => {
             setReadingOnboarding(false);
             setEntry("app");
+            setJourneyProfile(savedProfile);
             setJourney({
               ...emptyJourney,
               profile_id: savedProfile.id,
@@ -127,7 +129,7 @@ export default function App() {
       />
     );
   }
-  if (journey) return <StartupFunnel initial={journey} onExit={() => setJourney(null)} />
+  if (journey) return <StartupFunnel initial={journey} initialProfile={journeyProfile} onExit={() => { setJourney(null); setJourneyProfile(null); }} />
 
   return (
     <div className="relative flex h-full w-full justify-center overflow-hidden bg-[#040e0c]">

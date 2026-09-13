@@ -60,9 +60,11 @@ type Message = { role: string; text: string; source?: string }
 
 export default function StartupFunnel({
   initial,
+  initialProfile = null,
   onExit,
 }: {
   initial: JourneyState
+  initialProfile?: Profile | null
   onExit: () => void
 }) {
   const astro = useAstro()
@@ -83,7 +85,7 @@ export default function StartupFunnel({
   const [editingProfile, setEditingProfile] = useState(false)
   const [onboardingActive, setOnboardingActive] = useState(false)
   const [onboardingCategory, setOnboardingCategory] = useState<JourneyState["focus"] | undefined>(undefined)
-  const [justSaved, setJustSaved] = useState<Profile | null>(null)
+  const [justSaved, setJustSaved] = useState<Profile | null>(initialProfile)
   const profile = astro.profiles.find((p) => p.id === state.profile_id) ?? justSaved ?? astro.profile
   const guideGender = state.guide_gender ?? (profile?.birth.gender === "male" ? "male" : "female")
   const categoryInsight = getCategoryInsight(state.focus)
@@ -220,6 +222,7 @@ export default function StartupFunnel({
   const ordinal = ({ 1: 3, 2: 1, 3: 2, 7: 4, 8: 5, 4: 6, 5: 7, 9: 8, 10: 9, 6: 9 } as Record<number, number>)[state.step] ?? 0
   const requestBody = {
     profile_id: profile?.id,
+    birth: profile?.birth,
     language: state.language,
     focus: state.focus,
     question: state.question,

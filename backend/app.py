@@ -95,8 +95,11 @@ def owner(request: Request):
     identity = digest(token)
     with connection() as db:
         exists = db.execute("SELECT 1 FROM sessions WHERE id=?", (identity,)).fetchone()
-    if not exists:
-        raise HTTPException(401, "Session expired. Reload the app.")
+        if not exists:
+            # Vercel instances do not share /tmp SQLite. Re-register the existing
+            # high-entropy anonymous token locally instead of replacing it and
+            # changing the user's identity between consecutive requests.
+            db.execute("INSERT INTO sessions VALUES (?,?)", (identity, time.time()))
     return identity
 
 Owner = Annotated[str, Depends(owner)]
@@ -108,17 +111,33 @@ def journey_state(identity: Owner):
 
 @app.put('/api/journey')
 def update_journey(body: journey.StateInput, identity: Owner):
-    if body.profile_id:
-        get_profile(body.profile_id, identity)
     return journey.save_state(identity, body)
+
+def resolve_journey_profile(body: journey.ReadingInput, identity: str):
+    try:
+        return get_profile(body.profile_id, identity)
+    except HTTPException as error:
+        if error.status_code != 404 or body.birth is None:
+            raise
+    # Recalculate server-side from the validated birth input. This keeps the
+    # funnel functional when Vercel sends this request to a different instance.
+    place = get_place(body.birth.place_id)
+    profile = {
+        "id": body.profile_id,
+        "birth": body.birth.model_dump(mode="json"),
+        "place": place,
+        "charts": {system: calculate_chart(body.birth, place, system) for system in ("western", "vedic")},
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+    }
+    return profile
 
 @app.post('/api/journey/reading')
 def journey_reading(body: journey.ReadingInput, identity: Owner):
-    return journey.reading(get_profile(body.profile_id, identity), body, identity)
+    return journey.reading(resolve_journey_profile(body, identity), body, identity)
 
 @app.post('/api/journey/chat')
 def journey_chat(body: journey.ChatInput, identity: Owner):
-    return journey.chat(get_profile(body.profile_id, identity), body, identity)
+    return journey.chat(resolve_journey_profile(body, identity), body, identity)
 
 @app.get('/api/journey/chat')
 def journey_chat_history(profile_id: str, identity: Owner, focus: Literal['growth', 'career', 'relationships', 'wellbeing', 'marriage', 'business', 'numerology'] = 'growth'):
