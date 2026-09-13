@@ -10,7 +10,7 @@ import ParticlePlanet from "./ParticlePlanet"
 import useAmbientMusic from "./useAmbientMusic"
 import UnlockPreview from "./UnlockPreview"
 import { NumberReveal, type Numbers } from "./NumerologyPanel"
-import { ChartWheel } from "../components/ChartWheel"
+import { VedicKundaliChart } from "../components/VedicKundaliChart"
 import { discoveryNarration, followupFor } from "./discoveryStory"
 import {
   getCategoryInsight,
@@ -89,7 +89,8 @@ export default function StartupFunnel({
   const profile = astro.profiles.find((p) => p.id === state.profile_id) ?? justSaved ?? astro.profile
   const guideGender = state.guide_gender ?? (profile?.birth.gender === "male" ? "male" : "female")
   const categoryInsight = getCategoryInsight(state.focus)
-  const voiceHi = (astro.voiceLanguage ?? state.language) === "hi"
+  const voiceLanguage: "en" | "hi" = astro.voiceLanguage === "hi" ? "hi" : "en"
+  const voiceHi = voiceLanguage === "hi"
   const uiHi = astro.language === "hi"
   const hi = uiHi
   const promptKey = `${state.step}:${state.chapter}:${state.language}:${guideGender}`
@@ -113,13 +114,11 @@ export default function StartupFunnel({
   ]
 
   const [autoAdvanceSeconds, setAutoAdvanceSeconds] = useState<number | null>(null)
-  const [autoAdvancePaused, setAutoAdvancePaused] = useState(false)
   const [speechCompleted, setSpeechCompleted] = useState(false)
   const busyVoiceDone = useRef<(() => void) | null>(null)
 
   useEffect(() => {
     setAutoAdvanceSeconds(null)
-    setAutoAdvancePaused(false)
     setSpeechCompleted(false)
   }, [state.step])
 
@@ -133,8 +132,6 @@ export default function StartupFunnel({
     if (autoAdvanceSeconds === null) {
       setAutoAdvanceSeconds(3)
     }
-    if (autoAdvancePaused) return
-
     const interval = setInterval(() => {
       setAutoAdvanceSeconds((prev) => {
         if (prev === null) return 3
@@ -151,9 +148,9 @@ export default function StartupFunnel({
       })
     }, 1000)
     return () => clearInterval(interval)
-  }, [state.step, voice.playing, speechCompleted, sound, autoAdvancePaused, autoAdvanceSeconds])
+  }, [state.step, voice.playing, speechCompleted, sound, autoAdvanceSeconds])
 
-  const turnKey = `${state.step}:${state.focus}:${state.language}:${guideGender}`
+  const turnKey = `${state.step}:${state.focus}:${voiceLanguage}:${guideGender}`
   const heading = useRef<HTMLHeadingElement>(null)
   const scroll = useRef<HTMLElement>(null)
   const saveChain = useRef(Promise.resolve())
@@ -223,7 +220,7 @@ export default function StartupFunnel({
   const requestBody = {
     profile_id: profile?.id,
     birth: profile?.birth,
-    language: state.language,
+    language: voiceLanguage,
     focus: state.focus,
     question: state.question,
     context: state.context,
@@ -317,7 +314,7 @@ export default function StartupFunnel({
     setGuideThinking(true)
     api<{ text: string; source: string }>("/journey/guide", {
       method: "POST", signal: controller.signal,
-      body: JSON.stringify({ focus: state.focus, language: state.language, gender: guideGender,
+      body: JSON.stringify({ focus: state.focus, language: voiceLanguage, gender: guideGender,
         stage: state.step === 2 ? "welcome" : "context", intention: state.question }),
     }).then((turn) => {
       if (!controller.signal.aborted) setGuideTurn({ ...turn, key: turnKey })
@@ -604,7 +601,7 @@ export default function StartupFunnel({
 
           {state.step === 7 ? (
             <>
-              <ChartWheel chart={profile.charts.vedic} compact={true} />
+              <VedicKundaliChart chart={profile.charts.vedic} compact />
               <div className="my-1.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-950/70 border border-emerald-500/30 text-emerald-300 text-[11px] font-sans">
                 <span>✦</span>
                 <span>
@@ -617,8 +614,6 @@ export default function StartupFunnel({
               {/* Kundli Category Benefits */}
               <div
                 className="mt-2 p-3.5 sm:p-4 rounded-2xl bg-[#092218]/95 border border-gold/40 text-left shadow-lg space-y-2.5"
-                onMouseEnter={() => setAutoAdvancePaused(true)}
-                onTouchStart={() => setAutoAdvancePaused(true)}
               >
                 <div className="flex items-center justify-between border-b border-gold/20 pb-1.5">
                   <div className="flex items-center gap-2">
@@ -664,18 +659,13 @@ export default function StartupFunnel({
                 </div>
               </div>
 
-              {/* Auto-advancing Pill with Pause & Skip controls */}
+              {/* Automatic transition countdown with an optional immediate skip */}
               <div className="flex flex-col sm:flex-row items-center justify-between gap-2.5 p-3 rounded-xl bg-black/60 border border-gold/30 mt-2.5 backdrop-blur-md">
                 <div className="flex items-center gap-2 text-xs text-amber-200">
                   {voice.playing ? (
                     <>
                       <span className="w-2 h-2 rounded-full bg-gold animate-ping shrink-0" />
                       <span>{hi ? "मार्गदर्शिका आपकी कुंडली के लाभ समझा रही है..." : "Guide is explaining your Kundli benefits..."}</span>
-                    </>
-                  ) : autoAdvancePaused ? (
-                    <>
-                      <span className="text-amber-300 text-xs">⏸</span>
-                      <span>{hi ? "स्वतः आगे बढ़ना रुका है · आराम से पढ़ें" : "Auto-advance paused · Take your time reading"}</span>
                     </>
                   ) : (
                     <>
@@ -689,15 +679,6 @@ export default function StartupFunnel({
                   )}
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  {!voice.playing && (
-                    <button
-                      type="button"
-                      onClick={() => setAutoAdvancePaused((p) => !p)}
-                      className="px-2.5 py-1.5 rounded-lg border border-gold/40 text-cream text-[11px] hover:bg-gold/15 transition-all cursor-pointer"
-                    >
-                      {autoAdvancePaused ? (hi ? "चालू करें ▶" : "Resume ▶") : (hi ? "रोकें ⏸" : "Pause ⏸")}
-                    </button>
-                  )}
                   <button
                     type="button"
                     onClick={() => {
@@ -718,8 +699,6 @@ export default function StartupFunnel({
               {/* Numerology Category Benefits */}
               <div
                 className="mt-2 p-3.5 sm:p-4 rounded-2xl bg-[#092218]/95 border border-gold/40 text-left shadow-lg space-y-2.5"
-                onMouseEnter={() => setAutoAdvancePaused(true)}
-                onTouchStart={() => setAutoAdvancePaused(true)}
               >
                 <div className="flex items-center justify-between border-b border-gold/20 pb-1.5">
                   <div className="flex items-center gap-2">
@@ -765,18 +744,13 @@ export default function StartupFunnel({
                 </div>
               </div>
 
-              {/* Auto-advancing Pill with Pause & Skip controls */}
+              {/* Automatic transition countdown with an optional immediate skip */}
               <div className="flex flex-col sm:flex-row items-center justify-between gap-2.5 p-3 rounded-xl bg-black/60 border border-gold/30 mt-2.5 backdrop-blur-md">
                 <div className="flex items-center gap-2 text-xs text-amber-200">
                   {voice.playing ? (
                     <>
                       <span className="w-2 h-2 rounded-full bg-gold animate-ping shrink-0" />
                       <span>{hi ? "मार्गदर्शिका आपके अंकों के लाभ समझा रही है..." : "Guide is explaining your Numerology benefits..."}</span>
-                    </>
-                  ) : autoAdvancePaused ? (
-                    <>
-                      <span className="text-amber-300 text-xs">⏸</span>
-                      <span>{hi ? "स्वतः आगे बढ़ना रुका है · आराम से पढ़ें" : "Auto-advance paused · Take your time reading"}</span>
                     </>
                   ) : (
                     <>
@@ -790,15 +764,6 @@ export default function StartupFunnel({
                   )}
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  {!voice.playing && (
-                    <button
-                      type="button"
-                      onClick={() => setAutoAdvancePaused((p) => !p)}
-                      className="px-2.5 py-1.5 rounded-lg border border-gold/40 text-cream text-[11px] hover:bg-gold/15 transition-all cursor-pointer"
-                    >
-                      {autoAdvancePaused ? (hi ? "चालू करें ▶" : "Resume ▶") : (hi ? "रोकें ⏸" : "Pause ⏸")}
-                    </button>
-                  )}
                   <button
                     type="button"
                     onClick={() => {

@@ -100,7 +100,7 @@ export default function App() {
     if (readingOnboarding) {
       return (
         <ReadingOnboarding
-          language={astro.voiceLanguage}
+          language={astro.voiceLanguage === "hi" ? "hi" : "en"}
           onBackToLanding={() => setReadingOnboarding(false)}
           onComplete={(savedProfile, chosenFocus) => {
             setReadingOnboarding(false);
@@ -109,7 +109,7 @@ export default function App() {
             setJourney({
               ...emptyJourney,
               profile_id: savedProfile.id,
-              language: astro.language,
+              language: astro.language === "hi" ? "hi" : "en",
               focus: chosenFocus,
               step: 2,
             });

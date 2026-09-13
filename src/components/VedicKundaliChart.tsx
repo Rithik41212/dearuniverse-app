@@ -33,9 +33,11 @@ const PLANET_ABBR: Record<string, string> = {
 export function VedicKundaliChart({
   chart: supplied,
   onSelectPlanet,
+  compact = false,
 }: {
   chart?: Chart;
   onSelectPlanet?: (planetName: string) => void;
+  compact?: boolean;
 } = {}) {
   const astro = useAstro();
   const chart = supplied ?? astro.profile?.charts.vedic ?? astro.profile?.charts[astro.system];
@@ -117,8 +119,8 @@ export function VedicKundaliChart({
       </div>
 
       {/* Classical North Indian Diamond Chart SVG */}
-      <div className="relative w-full max-w-[310px] aspect-square rounded-2xl bg-gradient-to-b from-[#18130e] to-[#0f0c09] p-2 border border-gold/30 shadow-2xl shadow-black/60">
-        <svg viewBox="0 0 300 300" className="w-full h-full">
+      <div className={`relative w-full ${compact ? "max-w-[230px]" : "max-w-[310px]"} aspect-square rounded-2xl bg-gradient-to-b from-[#18130e] to-[#0f0c09] p-2 border border-gold/30 shadow-2xl shadow-black/60`}>
+        <svg viewBox="0 0 300 300" className="w-full h-full" role="img" aria-label="Vedic square Kundli chart">
           {/* Outer Boundary Square */}
           <rect x="10" y="10" width="280" height="280" rx="6" fill="none" stroke="rgba(232, 198, 127, 0.4)" strokeWidth="1.6" />
           <rect x="14" y="14" width="272" height="272" rx="4" fill="none" stroke="rgba(240, 145, 62, 0.15)" strokeWidth="0.8" />
@@ -219,7 +221,7 @@ export function VedicKundaliChart({
       </div>
 
       {/* Quick Planet Selector Chips */}
-      <div className="w-full mt-3 flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
+      {!compact && <div className="w-full mt-3 flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
         {mainPlanets.map((pName) => {
           const isSelected = activePlanet === pName;
           const pData = chart?.planets[pName];
@@ -240,10 +242,10 @@ export function VedicKundaliChart({
             </button>
           );
         })}
-      </div>
+      </div>}
 
       {/* Selected Planet Life Blessing Card */}
-      {selectedPlanet && (
+      {!compact && selectedPlanet && (
         <div className="mt-3 w-full animate-float-in rounded-2xl glass p-4 border border-gold/25">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-2.5">
