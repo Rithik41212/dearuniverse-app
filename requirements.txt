@@ -1,0 +1,8 @@
+fastapi==0.136.1
+uvicorn>=0.34,<1
+skyfield>=1.50,<2
+jplephem>=2.20
+httpx==0.28.1
+timezonefinder>=6.5,<9
+tzdata>=2025.2
+edge-tts>=7.2,<8

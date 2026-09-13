@@ -57,8 +57,10 @@ ORIGINS = set(os.environ.get("ASTRO_ALLOWED_ORIGINS", "http://localhost:8443,htt
 @app.middleware("http")
 async def protect_local_api(request: Request, call_next):
     origin = request.headers.get("origin")
+    # Allow Vercel deployments and configured origins
     if origin and origin not in ORIGINS:
-        return JSONResponse({"detail": "Origin not allowed"}, status_code=403)
+        if not (origin.endswith(".vercel.app") or os.environ.get("VERCEL")):
+            return JSONResponse({"detail": "Origin not allowed"}, status_code=403)
     if int(request.headers.get("content-length", "0")) > 32768:
         return JSONResponse({"detail": "Request too large"}, status_code=413)
     response = await call_next(request)
