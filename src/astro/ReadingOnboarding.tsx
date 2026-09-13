@@ -39,11 +39,16 @@ export default function ReadingOnboarding({
 
   // Initial mount: Play voiceover ONLY for selecting language
   useEffect(() => {
-    api("/session", { method: "POST" }).catch(() => {});
-    voice.unlock();
-    void voice.speak(LANG_VOICEOVER);
+    let cancelled = false;
+    void (async () => {
+      await api("/session", { method: "POST" }).catch(() => {});
+      if (cancelled) return;
+      voice.unlock();
+      await voice.speak(LANG_VOICEOVER);
+    })();
 
     return () => {
+      cancelled = true;
       voice.stop();
     };
   }, []);

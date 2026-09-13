@@ -6,6 +6,22 @@ const femaleNames = /female|swara|heera|aditi|zira|samantha|aria|neerja|priya|ha
 const maleNames = /\bmale\b|madhur|prabhat|david|mark|ravi|rishi|daniel|george|james/i;
 type Speech = { audio: string; mime: string; words: TimedWord[]; source: string; voice: string; timing: string };
 
+let sharedAudioContext: AudioContext | null = null;
+
+function unlockGuideAudio() {
+  try {
+    const Constructor = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (Constructor && (!sharedAudioContext || sharedAudioContext.state === "closed")) sharedAudioContext = new Constructor();
+    if (sharedAudioContext?.state === "suspended") void sharedAudioContext.resume();
+  } catch { /* Readable transcript and device speech remain available. */ }
+  return sharedAudioContext;
+}
+
+if (typeof document !== "undefined") {
+  document.addEventListener("pointerdown", unlockGuideAudio, true);
+  document.addEventListener("keydown", unlockGuideAudio, true);
+}
+
 export default function useGuideVoice(language: "en" | "hi", gender: "female" | "male" = "female") {
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selected, setSelected] = useState("");
@@ -39,11 +55,7 @@ export default function useGuideVoice(language: "en" | "hi", gender: "female" | 
     return () => synth.removeEventListener("voiceschanged", update);
   }, []);
   function unlock() {
-    try {
-      const Constructor = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-      if (Constructor && (!audioContext.current || audioContext.current.state === "closed")) audioContext.current = new Constructor();
-      if (audioContext.current?.state === "suspended") void audioContext.current.resume();
-    } catch { /* Readable transcript and device speech remain available. */ }
+    audioContext.current = unlockGuideAudio();
   }
   function stop() {
     sequence.current++;
@@ -168,7 +180,7 @@ export default function useGuideVoice(language: "en" | "hi", gender: "female" | 
       await deviceSpeech(text, ticket, onComplete);
     }
   }
-  useEffect(() => { alive.current=true; return () => { alive.current=false; stop(); void audioContext.current?.close(); audioContext.current=null; }; }, []);
+  useEffect(() => { alive.current=true; return () => { alive.current=false; stop(); audioContext.current=null; }; }, []);
   return { speak, stop, unlock, pause, playing, paused, loading, status, caption, progress, source, motion,
     voices:matching, selected:activeVoice?.voiceURI ?? "", setSelected, rate, setRate, mode, setMode, hasFemale:!!preferred };
 }
