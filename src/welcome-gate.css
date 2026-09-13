@@ -1,0 +1,255 @@
+.welcome-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  overflow: hidden;
+  background: #03140e;
+  color: #f4e6c9;
+  isolation: isolate;
+}
+
+.welcome-gate > .universe-background {
+  position: absolute;
+}
+
+.welcome-gate .universe-immersive {
+  background: linear-gradient(90deg, #02130ed9, #03150e33 52%, #02130ec7),
+    url('/art/emerald-universe.png') center bottom/cover no-repeat,
+    #03140e;
+}
+
+.welcome-gate .universe-wheel,
+.welcome-gate .universe-planet,
+.welcome-gate .universe-constellation {
+  display: none;
+}
+
+.welcome-gate-content {
+  position: relative;
+  z-index: 2;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  padding: 28px clamp(22px, 5vw, 72px);
+}
+
+.welcome-gate header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  gap: 14px;
+  font-family: var(--font-serif);
+  font-size: 14px;
+  letter-spacing: .32em;
+  color: #f2d9a8;
+}
+
+.welcome-gate header > span {
+  font-size: 38px;
+  color: #e9c57d;
+}
+
+.welcome-gate main {
+  width: min(640px, 100%);
+  margin: auto;
+  padding: 40px 0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.welcome-kicker {
+  font-size: 9px;
+  letter-spacing: .28em;
+  color: #d2bd8d;
+  margin-bottom: 19px;
+  text-align: center;
+}
+
+.welcome-gate h1 {
+  font-family: var(--font-display);
+  font-size: clamp(46px, 6vw, 82px);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -.045em;
+  text-shadow: 0 8px 45px #0008;
+  text-align: center;
+}
+
+.welcome-gate h1 em {
+  font-weight: 400;
+  color: #e7ca91;
+}
+
+.welcome-copy {
+  max-width: 520px;
+  margin: 24px auto 34px;
+  color: #d1cab3;
+  font-family: var(--font-serif);
+  font-size: clamp(15px, 1.5vw, 18px);
+  line-height: 1.75;
+  text-align: center;
+}
+
+.welcome-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  width: min(470px, 100%);
+  margin: 0 auto;
+}
+
+.welcome-actions button {
+  flex: 1;
+  min-height: 57px;
+  border-radius: 999px;
+  font-size: 13px;
+  transition: transform .3s, background .3s, border-color .3s, box-shadow .3s;
+}
+
+.welcome-actions button:hover {
+  transform: translateY(-2px);
+}
+
+.welcome-login {
+  border: 1px solid #ddc08280;
+  background: #09251aa8;
+  color: #f2dfb9;
+  backdrop-filter: blur(12px);
+}
+
+.welcome-login:hover {
+  background: #103828c0;
+  border-color: #f0c978;
+}
+
+.welcome-reading {
+  border: 1px solid #f5cf88;
+  background: linear-gradient(125deg, #f0c16e, #f6dda7);
+  color: #23180b;
+  font-weight: 600;
+  box-shadow: 0 10px 35px #edbd6a2b;
+}
+
+.welcome-reading:hover {
+  box-shadow: 0 14px 40px #edbd6a4d;
+}
+
+.welcome-reading span {
+  margin-left: 10px;
+}
+
+.welcome-gate main > small {
+  display: block;
+  margin: 16px auto 0;
+  color: #a9a58f;
+  font-size: 10px;
+  text-align: center;
+}
+
+.welcome-error {
+  max-width: 470px;
+  margin: 14px auto 0;
+  color: #f1c18f;
+  font-size: 11px;
+  text-align: center;
+}
+
+.welcome-gate footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 8px;
+  letter-spacing: .18em;
+  color: #b9ae8c;
+}
+
+.welcome-orbit {
+  position: absolute;
+  z-index: 1;
+  width: 430px;
+  color: #deb978;
+  opacity: .23;
+  pointer-events: none;
+  animation: slowspin 200s linear infinite;
+}
+
+.welcome-orbit-one {
+  right: -210px;
+  top: 4%;
+}
+
+.welcome-orbit-two {
+  left: 24%;
+  bottom: -330px;
+}
+
+.welcome-gate button:focus-visible {
+  outline: 2px solid #f5d28c;
+  outline-offset: 4px;
+}
+
+@media (max-width: 600px) {
+  .welcome-gate .universe-immersive {
+    background-position: 62% bottom;
+  }
+  .welcome-gate-content {
+    padding: 21px 20px;
+  }
+  .welcome-gate header {
+    font-size: 11px;
+    justify-content: center;
+  }
+  .welcome-gate header > span {
+    font-size: 29px;
+  }
+  .welcome-gate main {
+    margin: auto;
+    padding: 35px 0;
+    text-align: center;
+  }
+  .welcome-gate h1 {
+    font-size: clamp(40px, 12vw, 56px);
+  }
+  .welcome-copy {
+    font-size: 14px;
+    margin: 20px auto 26px;
+  }
+  .welcome-actions {
+    flex-direction: column-reverse;
+    width: 100%;
+  }
+  .welcome-actions button {
+    flex: auto;
+    width: 100%;
+    min-height: 52px;
+  }
+  .welcome-gate footer {
+    font-size: 6px;
+  }
+  .welcome-orbit {
+    width: 290px;
+  }
+  .welcome-orbit-one {
+    right: -190px;
+  }
+  .welcome-orbit-two {
+    left: -80px;
+    bottom: -210px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .welcome-orbit {
+    animation: none;
+  }
+  .welcome-actions button {
+    transition: none;
+  }
+}

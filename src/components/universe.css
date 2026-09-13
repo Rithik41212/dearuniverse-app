@@ -1,0 +1,18 @@
+.universe-background { position:absolute; inset:0; overflow:hidden; pointer-events:none; background:radial-gradient(ellipse at 15% 20%,#164d3b66,transparent 55%),radial-gradient(ellipse at 85% 80%,#15372c88,transparent 50%),#061812; }
+.universe-nebula { position:absolute; inset:-25%; background:radial-gradient(ellipse at 25% 40%,#488c7140,transparent 38%),radial-gradient(ellipse at 70% 65%,#7b825022,transparent 40%); filter:blur(25px); animation:nebula-flow 34s ease-in-out infinite alternate; }
+.universe-texture { position:absolute; inset:0; opacity:.2; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23ffffff' filter='url(%23n)' opacity='.35' d='M0 0h180v180H0z'/%3E%3C/svg%3E"); mix-blend-mode:soft-light; }
+.universe-stars { position:absolute; inset:-5%; opacity:.65; animation:star-travel 70s linear infinite alternate; }
+.universe-wheel { position:absolute; width:620px; max-width:160vw; left:50%; top:28%; translate:-50% 0; color:#d8c08a; opacity:.065; animation:slowspin 200s linear infinite; }
+.universe-wheel svg { width:100%; height:100%; }
+.universe-constellation { position:absolute; inset:0; width:100%; height:100%; color:#cbb884; opacity:.15; animation:constellation-drift 22s ease-in-out infinite alternate; }
+.universe-planet { position:absolute; width:100px; height:100px; top:8%; right:10%; border-radius:50%; background:radial-gradient(circle at 28% 25%,#c5c48d80,#50856b40 35%,#071a1590 72%); box-shadow:inset 6px 3px 18px #b1c49422,16px 14px 48px #0006; opacity:.35; animation:constellation-drift 25s ease-in-out infinite alternate; }
+.universe-immersive { background:radial-gradient(ellipse at 48% 48%,#174235,#061611 62%,#020b09); }
+.universe-immersive .universe-wheel { top:50%; translate:-50% -50%; opacity:.17; width:850px; max-width:190vw; }
+.universe-immersive .universe-nebula { opacity:1; }
+.universe-immersive .universe-planet { width:clamp(80px,18vw,150px); height:clamp(80px,18vw,150px); opacity:.65; top:8%; right:18%; }
+.universe-immersive .universe-constellation { opacity:.32; }
+.universe-immersive .universe-stars { opacity:.95; }
+@keyframes nebula-flow { to { transform:translate(8%,-6%) rotate(15deg) scale(1.15); } }
+@keyframes star-travel { to { transform:translate(3%,-5%) rotate(7deg); } }
+@keyframes constellation-drift { to { transform:translateY(-15px) rotate(3deg); } }
+@media(prefers-reduced-motion:reduce) { .universe-background *, .category-world-art { animation:none!important; } }

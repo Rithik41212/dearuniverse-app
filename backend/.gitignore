@@ -1,0 +1,5 @@
+data/*.sqlite3*
+data/ephe/*.se1
+__pycache__/
+.pytest_cache/
+.env

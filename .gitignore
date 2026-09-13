@@ -1,0 +1,36 @@
+node_modules/
+dist/
+build/
+.cache/
+.env*
+.vite/
+vite.config.*.timestamp-*
+*.tsbuildinfo
+*-debug.log*
+logs/
+*.log
+.claude-replay.*
+.tmp-*
+/.figma/design-context/
+
+# Platform-managed agentplat state, not project source. In the
+# client-initiated single-repo workspace layout (make's `Path: "."` spec) the
+# repo root IS the workspace root, so these land inside this repo rather than
+# beside it.
+/.plugins/
+/.opencode-skills/
+test-results/
+playwright-report/
+.test-runs/
+.venv/
+__pycache__/
+.pytest_cache/
+backend/data/*.sqlite3*
+backend/data/ephe/*.se1
+!backend/.env.example
+scratch/
+*.mp4
+backend/backend.log
+backend/backend-error.log
+.tmp-backend*
+.tmp-pytest/

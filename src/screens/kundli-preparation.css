@@ -1,0 +1,432 @@
+/* ─── Kundli Preparation Screen ─── */
+
+/* Shell — fills the entire app column */
+.kundli-prep {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  background: #08070a;
+  overflow: hidden;
+  animation: kundli-fade-in 0.6s ease-out both;
+}
+
+@keyframes kundli-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.kundli-prep-exit {
+  animation: kundli-fade-out 0.8s ease-in both;
+}
+
+@keyframes kundli-fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* Inner scrollable column */
+.kundli-prep-inner {
+  position: relative;
+  width: 100%;
+  max-width: 28rem; /* match app's max-w-md */
+  height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1.5rem 3rem;
+  background: linear-gradient(to bottom, #14100c, #0d0a08, #08070a);
+}
+
+.kundli-prep-inner::-webkit-scrollbar { display: none; }
+.kundli-prep-inner { scrollbar-width: none; }
+
+/* ─── Ornate Gold Corner Decorations ─── */
+.ornate-corner {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.ornate-corner--tl {
+  top: 0;
+  left: 0;
+}
+
+.ornate-corner--tr {
+  top: 0;
+  right: 0;
+  transform: scaleX(-1);
+}
+
+.ornate-corner svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 12px rgba(232, 198, 127, 0.3));
+}
+
+/* ─── Ambient warm glow behind content ─── */
+.kundli-glow {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  width: 500px;
+  height: 500px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(240, 145, 62, 0.12) 0%, rgba(232, 198, 127, 0.06) 30%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  animation: glow-pulse 5s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
+  50%      { opacity: 1;   transform: translate(-50%, -50%) scale(1.1); }
+}
+
+/* ─── Precision Calculation Badge ─── */
+.precision-badge {
+  position: relative;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(232, 198, 127, 0.4);
+  background: linear-gradient(135deg, rgba(232, 198, 127, 0.12), rgba(240, 145, 62, 0.08));
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #e8c67f;
+  animation: badge-shimmer 3s ease-in-out infinite;
+}
+
+@keyframes badge-shimmer {
+  0%, 100% { border-color: rgba(232, 198, 127, 0.4); box-shadow: 0 0 10px rgba(232, 198, 127, 0.1); }
+  50%      { border-color: rgba(232, 198, 127, 0.7); box-shadow: 0 0 20px rgba(232, 198, 127, 0.2); }
+}
+
+/* ─── Main Hindi Title ─── */
+.kundli-title {
+  position: relative;
+  z-index: 3;
+  font-family: var(--font-serif, 'Marcellus', serif);
+  font-size: 2rem;
+  line-height: 1.3;
+  text-align: center;
+  margin-top: 1.5rem;
+  background: linear-gradient(135deg, #f7b46b 0%, #e8c67f 40%, #f0913e 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: title-enter 0.8s ease-out 0.3s both;
+}
+
+@keyframes title-enter {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Cycling Subtitle ─── */
+.kundli-subtitle-wrap {
+  position: relative;
+  z-index: 3;
+  height: 1.5rem;
+  margin-top: 0.75rem;
+  overflow: hidden;
+}
+
+.kundli-subtitle {
+  font-family: var(--font-sans, 'Inter', sans-serif);
+  font-size: 0.85rem;
+  color: #a89b8c;
+  text-align: center;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.kundli-subtitle.entering {
+  animation: subtitle-slide-in 0.6s ease-out both;
+}
+
+.kundli-subtitle.exiting {
+  animation: subtitle-slide-out 0.6s ease-in both;
+}
+
+@keyframes subtitle-slide-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes subtitle-slide-out {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-8px); }
+}
+
+/* ─── Section Header with Grid Icon ─── */
+.kundli-section-header {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+  width: 100%;
+  animation: section-enter 0.6s ease-out 0.5s both;
+}
+
+@keyframes section-enter {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.kundli-section-header .grid-icon {
+  font-size: 1.2rem;
+  color: #e8c67f;
+}
+
+.kundli-section-header h2 {
+  font-family: var(--font-serif, 'Marcellus', serif);
+  font-size: 1.15rem;
+  color: #f4ece0;
+}
+
+/* ─── Description Block with Gold Accent Bar ─── */
+.kundli-description {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  margin-top: 1rem;
+  padding: 1rem 1rem 1rem 1.25rem;
+  border-left: 3px solid #e8c67f;
+  font-size: 0.82rem;
+  line-height: 1.7;
+  color: #d4c8b8;
+  background: linear-gradient(90deg, rgba(232, 198, 127, 0.06), transparent);
+  border-radius: 0 0.75rem 0.75rem 0;
+  animation: desc-enter 0.7s ease-out 0.7s both;
+}
+
+@keyframes desc-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Astrological Detail Badges ─── */
+.astro-badges {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+  animation: badges-enter 0.6s ease-out 0.9s both;
+}
+
+@keyframes badges-enter {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.astro-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  min-width: 100px;
+  padding: 0.6rem 1rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(232, 198, 127, 0.3);
+  background: linear-gradient(160deg, rgba(232, 198, 127, 0.08), rgba(14, 11, 9, 0.5));
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.astro-badge:hover {
+  border-color: rgba(232, 198, 127, 0.6);
+  box-shadow: 0 0 16px rgba(232, 198, 127, 0.15);
+}
+
+.astro-badge-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+  color: #a89b8c;
+}
+
+.astro-badge-value {
+  font-family: var(--font-serif, 'Marcellus', serif);
+  font-size: 1rem;
+  color: #f4ece0;
+  font-weight: 500;
+}
+
+/* ─── North Indian Kundli Chart ─── */
+.kundli-chart-container {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  max-width: 320px;
+  margin: 1.5rem auto 0;
+  animation: chart-enter 0.8s ease-out 1.1s both;
+}
+
+@keyframes chart-enter {
+  from { opacity: 0; transform: scale(0.9) translateY(16px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.kundli-chart-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 1rem;
+  border: 2px solid rgba(232, 198, 127, 0.35);
+  background: linear-gradient(160deg, #f5edd7, #e8d9b8);
+  box-shadow:
+    0 0 30px rgba(232, 198, 127, 0.15),
+    inset 0 0 30px rgba(232, 198, 127, 0.05);
+  overflow: hidden;
+}
+
+/* Scanning beam animation */
+.kundli-scan-beam {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.kundli-scan-beam::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(180deg,
+    transparent,
+    rgba(232, 198, 127, 0.15),
+    rgba(240, 145, 62, 0.2),
+    rgba(232, 198, 127, 0.15),
+    transparent
+  );
+  animation: scan-sweep 3.5s ease-in-out infinite;
+}
+
+@keyframes scan-sweep {
+  0%   { top: -60px; }
+  50%  { top: 100%; }
+  100% { top: -60px; }
+}
+
+/* Chart SVG styling */
+.kundli-chart-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.kundli-chart-svg line {
+  stroke: #8b7d6b;
+  stroke-width: 1.2;
+}
+
+.kundli-chart-svg .chart-outer {
+  fill: none;
+  stroke: #8b7d6b;
+  stroke-width: 1.5;
+}
+
+.kundli-chart-svg .sign-label {
+  font-family: var(--font-sans, 'Inter', sans-serif);
+  font-size: 9px;
+  fill: #6b5e4e;
+  font-weight: 500;
+}
+
+.kundli-chart-svg .sign-glyph {
+  font-size: 9px;
+  fill: #8b7d6b;
+}
+
+.kundli-chart-svg .center-name {
+  font-family: var(--font-serif, 'Marcellus', serif);
+  font-size: 14px;
+  fill: #3a2f22;
+  font-weight: 600;
+}
+
+.kundli-chart-svg .center-label {
+  font-family: var(--font-sans, 'Inter', sans-serif);
+  font-size: 8px;
+  fill: #8b7d6b;
+}
+
+/* Planet dots on the chart */
+.planet-dot {
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
+}
+
+.planet-dot circle {
+  stroke-width: 1.5;
+}
+
+.planet-dot text {
+  font-family: var(--font-sans, 'Inter', sans-serif);
+  font-size: 7px;
+  font-weight: 600;
+  fill: white;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+/* ─── Progress indicator at bottom ─── */
+.kundli-progress {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  max-width: 200px;
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.kundli-progress-bar {
+  width: 100%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.kundli-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #f0913e, #e8c67f);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+.kundli-progress-text {
+  font-size: 0.7rem;
+  color: #a89b8c;
+  letter-spacing: 0.05em;
+}
+
+/* Planet color coding */
+.planet-sun     { fill: #c9a03d; }
+.planet-moon    { fill: #b0a08a; }
+.planet-mars    { fill: #c0453a; }
+.planet-mercury { fill: #c9a03d; }
+.planet-jupiter { fill: #c9a03d; }
+.planet-venus   { fill: #c9a03d; }
+.planet-saturn  { fill: #7a7068; }
+.planet-rahu    { fill: #6b5ca0; }
+.planet-ketu    { fill: #6b5040; }
