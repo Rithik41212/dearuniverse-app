@@ -2,6 +2,11 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "framework": null,
+  "functions": {
+    "api/**/*.py": {
+      "excludeFiles": "{{src,public,dist,node_modules,tests,.figma,.test-runs,test-results,scratch,data,scripts}/**,backend/tests/**,**/{tests,test,__pycache__,docs,examples}/**,**/*.{pyc,pyo,md,rst},playwright*.ts,*.log,.tmp-*}"
+    }
+  },
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/index.py" }
   ]
